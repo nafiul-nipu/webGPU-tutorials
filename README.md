@@ -10,6 +10,8 @@
 
 - WebGPU for Beginners - YouTube: [Youtube Link](https://youtube.com/playlist?list=PLn3eTxaOtL2Ns3wkxdyS3CiqkJuwQdZzn)
 
+- WebGPU tutorial - FreeCodeCamp - [Youtube Link](https://youtu.be/KTFFdZSDiTU)
+
 - WebGPU Fundamentals: [https://webgpufundamentals.org/](https://webgpufundamentals.org/)
 
 - WebGPU Samples: [https://webgpu.github.io/webgpu-samples](https://webgpu.github.io/webgpu-samples)

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Square</title>
+</head>
+<body>
+    <canvas width="512" height="512"></canvas>
+
+    <script type="module">
+        const canvas = document.querySelector('canvas');
+
+        // WEBGPU CODE BEGINS HERE
+        // check if the browser supports webgpu
+        if(!navigator.gpu){
+            throw new Error('WebGPU not supported');
+        }
+
+        // request adapter - WebGPU's representation of a GPU hardware
+        const adapter = await navigator.gpu.requestAdapter();
+        if(!adapter){
+            throw new Error('No GPUAdapter found');
+        }
+
+        // requst GPUDevice - the main interface through which most interaction with the GPU happens
+        const device = await adapter.requestDevice();
+
+
+        // create a GPU canvas context
+        const context = canvas.getContext("webgpu");
+        // The context that it returns must then be associated with the device using the configure() method,
+        const canvasFormat = navigator.gpu.getPreferredCanvasFormat();
+        context.configure({
+            device: device,
+            format: canvasFormat,
+        });
+
+        // creating an array to hold the vertex positions
+        const vertices = new Float32Array([
+            // X, y,
+            -0.8, -0.8, // Triangle 1 (Blue)
+            0.8, -0.8,
+            0.8,  0.8,
+
+            -0.8, -0.8, // Triangle 2 (Red)
+            0.8,  0.8,
+            -0.8,  0.8,
+        ])
+
+        // creating vertex buffer
+        const vertexBuffer = device.createBuffer({
+            lable: "Cell vertices",
+            size: vertices.byteLength,
+            usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+        })
+
+        // copy the vertex data into the buffer's memory
+        device.queue.writeBuffer(vertexBuffer, /*bufferOffset=*/0, vertices);
+
+        // Define the vertex data structure with a GPUVertexBufferLayout dictionary
+        const vertexBufferLayout = {
+            arrayStride: 8, //this is the number of bytes the GPU needs to skip forward in the buffer when it's looking for the next vertex.
+            attributes: [{ //individual pieces of information encoded into each vertex
+                format: "float32x2",
+                offset: 0, //how many bytes into the vertex this particular attribute starts
+                shaderLocation: 0, //position
+            }]
+        }
+
+        // shader code
+        const cellShaderModule = device.createShaderModule({
+            label: "Cell Shader",
+            code: `
+                // shder code will go here
+                @vertex
+                fn vertexMain(@location(0) pos: vec2f) ->
+                    @builtin(position) vec4f{
+                        // return the position of the vertex
+                        return vec4f(pos, 0.0, 1.0);
+                }
+
+                @fragment
+                fn fragmentMain() -> @location(0) vec4f {
+                    // return the color of the pixel
+                    return vec4f(1,0,0,1);
+                }
+            `
+        });
+
+        // creating rendering pileline
+        const cellPipeline = device.createRenderPipeline({
+            label: "Cell Pipeline",
+            layout: "auto",
+            vertex: {
+                module: cellShaderModule,
+                entryPoint: "vertexMain",
+                buffers: [vertexBufferLayout],
+            },
+            fragment: {
+                module: cellShaderModule,
+                entryPoint: "fragmentMain",
+                targets: [{
+                    format: canvasFormat,
+                }]
+            }
+        })
+
+        // have the device create a GPUCommandEncoder, which provides an interface for recording GPU commands
+        const encoder = device.createCommandEncoder();
+
+        // render pass
+        const pass = encoder.beginRenderPass({
+            colorAttachments: [{
+                view: context.getCurrentTexture().createView(), // Get the texture from the canvas context
+                loadOp: "clear",
+                clearValue: { r: 0, g: 0, b: 0.4, a: 1.0 },
+                storeOp: "store",
+            }]
+        });
+
+        // draw the square
+        pass.setPipeline(cellPipeline);
+        pass.setVertexBuffer(0, vertexBuffer);
+        pass.draw(vertices.length/2) // 6 vertices
+
+
+        // end render pass
+        pass.end();
+
+        // creating a GPUCommandBuffer from the GPUCommandEncoder
+        // const commandBuffer = encoder.finish();
+
+        // Submit the command buffer to the GPU using the queue of the GPUDevice
+        // device.queue.submit([commandBuffer]);
+
+        // finish the command buffer and immediately submit it to the GPU
+        device.queue.submit([encoder.finish()]);
+
+
+    </script>
+</body>
+</html>
