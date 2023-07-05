@@ -1,0 +1,27 @@
+Web GPU
+
+Articles
+1.	WebGPU: Unlocking modern GPU access in the browser - https://developer.chrome.com/blog/webgpu-io2023/
+2.	WebGPU – All of the cores, none of the canvas – https://surma.dev/things/webgpu/
+3.	Raw WebGPU - https://alain.xyz/blog/raw-webgpu
+
+
+Tutorials
+1.	Simple webGPU example - https://codelabs.developers.google.com/your-first-webgpu-app#0
+2.	WebGPU samples - https://webgpu.github.io/webgpu-samples/
+3.	WebGPU Fundamentals - https://webgpufundamentals.org/
+4.	From 0 to glTF with webGPU - https://www.willusher.io/graphics/2023/04/10/0-to-gltf-triangle
+
+
+Githubs
+1.	WebGPU Step by Step - https://github.com/jack1232/WebGPU-Step-By-Step
+2.	WebGPU Implementation Status - https://github.com/gpuweb/gpuweb/wiki/Implementation-Status
+3.	Awesome WebGPU - https://github.com/mikbry/awesome-webgpu
+
+
+Youtube Tutorials
+1.	WebGPU for beginners - https://youtube.com/playlist?list=PLn3eTxaOtL2Ns3wkxdyS3CiqkJuwQdZzn
+2.	WebGPU tutorial - Advanced Graphics on the web Course - https://youtu.be/KTFFdZSDiTU
+
+
+Reference Doc - https://gpuweb.github.io/gpuweb/
